@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 
+#
 # Twitter Gözetleyici
 # Programmed by : Birol Kuyumcu ( bluekid70@gmail.com )
 #				: https://tr.linkedin.com/in/birol-kuyumcu-53798771
@@ -12,12 +12,13 @@
 
 import sys
 
-from PySide import QtCore, QtGui
+from PySide import QtCore, QtGui, QtWebKit
 from pattern.web import Twitter, plaintext, hashtags
 from wordcloud import WordCloud
 import re
 import cv2
 import numpy as np
+import os
 
 
 class Ui_Dialog(object):
@@ -52,6 +53,9 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         #
         self.pushButton.clicked.connect(self.on_buttom_pressed)
+        self.listWidget.doubleClicked.connect(self.goTweet)
+
+        #
         self.alText = u''
         self.fullText = u''
         self.twitter = Twitter(language='tr')
@@ -59,6 +63,7 @@ class Ui_Dialog(object):
         self.timer = QtCore.QTimer(Dialog)
         self.timer.timeout.connect(self.on_timer)
         self.dialog = Dialog
+        self.twIds = []
 
 
     def retranslateUi(self, Dialog):
@@ -72,6 +77,7 @@ class Ui_Dialog(object):
             self.pushButton.setText(u'Gözetle')
         else:
             self.listWidget.clear()
+            self.twIds = []
             self.fullText = u''
             self.on_timer()
             self.timer.start(60000)
@@ -132,6 +138,7 @@ class Ui_Dialog(object):
 
         for tweet in tList:
             self.listWidget.addItem(QtGui.QListWidgetItem(tweet.text))
+            self.twIds.append(tweet.id)
             self.listWidget.setCurrentRow(self.listWidget.count()-1)
             tweet.text = self.filterRT(tweet.text)
             self.alText = self.alText + plaintext(tweet.text) + u' '
@@ -144,7 +151,17 @@ class Ui_Dialog(object):
             ix = tweet.find(':')
             tweet = tweet[ix:]
         return tweet
-		
+    def goTweet(self):
+        i = self.listWidget.currentRow()
+        urlTw = 'https:/'+'/twitter.com/statuses/'+ str(self.twIds[i])
+        webDlg = QtGui.QDialog()
+        webDlg.setWindowTitle('Twit : ' + str(self.twIds[i]))
+        webDlg.resize(1024, 768)
+        webView = QtWebKit.QWebView(webDlg)
+        webView.resize(1024, 768)
+        webView.load(QtCore.QUrl(urlTw))
+        webView.show()
+        webDlg.exec_()
 
 # Create the Qt Application
 app = QtGui.QApplication(sys.argv)
