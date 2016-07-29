@@ -5,7 +5,6 @@
 #				: https://tr.linkedin.com/in/birol-kuyumcu-53798771
 # License : GPL
 # Requirements :
-#   OpenCv : http://opencv.org/
 #   PySide : https://github.com/PySide
 #   wordcloud : https://github.com/amueller/word_cloud
 #   pattern : http://www.cnts.ua.ac.be/pattern
@@ -16,7 +15,6 @@ from PySide import QtCore, QtGui, QtWebKit
 from pattern.web import Twitter, plaintext, hashtags
 from wordcloud import WordCloud
 import re
-import cv2
 import numpy as np
 import os
 
@@ -93,19 +91,14 @@ class Ui_Dialog(object):
         self.showWordCloud()
 
 
-    def showImg(self, label, img):
-        # print "In Show"
-        height, width, byteValue = img.shape
-        byteValue = byteValue * width
-        timg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        image = QtGui.QImage(timg.data, width, height, byteValue, QtGui.QImage.Format_RGB888)
-        label.setPixmap(QtGui.QPixmap(image))
-
     def showWordCloud(self):
         wordcloud = WordCloud().generate(self.fullText)
         img = np.array(wordcloud.to_image())
-        img = cv2.pyrUp(img)
-        self.showImg(self.label, img)
+        height, width, byteValue = img.shape
+        byteValue = byteValue * width
+        image = QtGui.QImage(img.data, width, height, byteValue, QtGui.QImage.Format_RGB888)
+        pxmp = QtGui.QPixmap(image).scaled(QtCore.QSize(800,400))
+        self.label.setPixmap(pxmp)
 
     def filterWords(self):
         # sık geçen kelimeler filitreleniyor eksik elbette....
