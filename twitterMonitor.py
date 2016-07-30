@@ -92,12 +92,12 @@ class Ui_Dialog(object):
 
 
     def showWordCloud(self):
-        wordcloud = WordCloud().generate(self.fullText)
+        wordcloud = WordCloud(width=800, height=400).generate(self.fullText)
         img = np.array(wordcloud.to_image())
         height, width, byteValue = img.shape
         byteValue = byteValue * width
         image = QtGui.QImage(img.data, width, height, byteValue, QtGui.QImage.Format_RGB888)
-        pxmp = QtGui.QPixmap(image).scaled(QtCore.QSize(800,400))
+        pxmp = QtGui.QPixmap(image)
         self.label.setPixmap(pxmp)
 
     def filterWords(self):
