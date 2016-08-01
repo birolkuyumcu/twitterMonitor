@@ -103,7 +103,7 @@ class Ui_Dialog(object):
     def filterWords(self):
         # sık geçen kelimeler filitreleniyor eksik elbette....
         flt = [u'https', u'nin', u'bir', u'daha', u'diye', u'için', u'gibi', u'işte', u'ile', u'değil', u'ben', u'sen',
-               u'çok', u'ama', u'Sen',u'den']
+               u'çok', u'ama', u'Sen',u'den',u'htt']
         derle = re.compile("\w*", re.UNICODE)
         wL = re.findall(derle, self.alText)
         temp = []
@@ -134,6 +134,7 @@ class Ui_Dialog(object):
             self.twIds.append(tweet.id)
             self.listWidget.setCurrentRow(self.listWidget.count()-1)
             tweet.text = self.filterRT(tweet.text)
+            tweet.text = self.filterLink(tweet.text)
             self.alText = self.alText + plaintext(tweet.text) + u' '
             self.prevId = tweet.id
 
@@ -144,6 +145,20 @@ class Ui_Dialog(object):
             ix = tweet.find(':')
             tweet = tweet[ix:]
         return tweet
+
+    def filterLink(self,tweet):
+        regex = r'https?://[^\s<>"]+|www\.[^\s<>"]+'
+        match = re.search(regex, tweet)
+        buf = tweet
+        if match:
+            ixs= tweet.find(match.group())
+            ixe= len(match.group())
+            try:
+                buf = tweet[:ixs]
+            except:
+                print "not removed"
+        return buf
+
     def goTweet(self):
         i = self.listWidget.currentRow()
         urlTw = 'https:/'+'/twitter.com/statuses/'+ str(self.twIds[i])
