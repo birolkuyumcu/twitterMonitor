@@ -17,6 +17,7 @@ from wordcloud import WordCloud
 import re
 import numpy as np
 import os
+import webbrowser
 
 
 class Ui_Dialog(object):
@@ -162,14 +163,7 @@ class Ui_Dialog(object):
     def goTweet(self):
         i = self.listWidget.currentRow()
         urlTw = 'https:/'+'/twitter.com/statuses/'+ str(self.twIds[i])
-        webDlg = QtGui.QDialog()
-        webDlg.setWindowTitle('Twit : ' + str(self.twIds[i]))
-        webDlg.resize(1024, 768)
-        webView = QtWebKit.QWebView(webDlg)
-        webView.resize(1024, 768)
-        webView.load(QtCore.QUrl(urlTw))
-        webView.show()
-        webDlg.exec_()
+        webbrowser.open(urlTw)
 
 # Create the Qt Application
 app = QtGui.QApplication(sys.argv)
