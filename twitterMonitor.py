@@ -19,6 +19,18 @@ import numpy as np
 import os
 import webbrowser
 
+# clean twits from https://github.com/mertkahyaoglu/twitter-sentiment-analysis/blob/master/utils.py
+# Remove hashtags, mentions, links
+def cleanTweet(tweet):
+	item = ' '.join(word.lower() for word in tweet.split() \
+		if not word.startswith('#') and \
+		   not word.startswith('@') and \
+		   not word.startswith('http') and \
+		   not word.startswith('RT'))
+	return item
+ 
+#
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -131,7 +143,7 @@ class Ui_Dialog(object):
             QtGui.QMessageBox.information(self.dialog, "Information", "Python rocks!")
 
         for tweet in tList:
-            self.listWidget.addItem(QtGui.QListWidgetItem(tweet.text))
+            self.listWidget.addItem(QtGui.QListWidgetItem(cleanTweet(tweet.text)))
             self.twIds.append(tweet.id)
             self.listWidget.setCurrentRow(self.listWidget.count()-1)
             tweet.text = self.filterRT(tweet.text)
